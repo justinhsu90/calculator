@@ -163,6 +163,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void SetMyOnClick() {
+		btn_00.setOnClickListener(MyOnClick);
 		btn_0.setOnClickListener(MyOnClick);
 		btn_1.setOnClickListener(MyOnClick);
 		btn_2.setOnClickListener(MyOnClick);
@@ -187,6 +188,9 @@ public class MainActivity extends Activity {
 	private Button.OnClickListener MyOnClick = new Button.OnClickListener() {
 
 		public void onClick(View v) {
+			if (output.getText().equals("0")) {
+				output.setText("");
+			}
 			vibrate.vibrate(100);
 			switch (v.getId()) {
 			case R.id.Btn_00:
@@ -490,15 +494,19 @@ public class MainActivity extends Activity {
 					String tempString2 = String.format("%.04f", Float.valueOf(expression.get(0)));
 					// System.out.println("last" +
 					// tempString2.(tempString2.length()));
-					while (String.valueOf(tempString2.length()).equals("0")) {
+					// if
+					// (String.charAt(tempString2.length())==String.charAt(0)) {
+					while (String.valueOf(tempString2.charAt(tempString2.length() - 1)).equals("0")) {
 						tempString2 = tempString2.substring(0, tempString2.length() - 1);
 						System.out.println("last" + tempString2);
 
 					}
 					System.out.println("last:::::::::" + tempString2);
 
-					return String.valueOf(String.format("%.04f", Float.valueOf(expression.get(0))));
+					// return String.valueOf(String.format("%.04f",
+					// Float.valueOf(expression.get(0))));
 					// return "0";
+					return tempString2;
 				}
 			}
 		}
