@@ -77,7 +77,6 @@
                     android:background="@drawable/function_button_background"
                     android:text="."
                     android:textSize="60sp" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -139,7 +138,6 @@
                     android:background="@drawable/number_button_background"
                     android:text="0"
                     android:textSize="60sp" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -194,7 +192,7 @@
                     android:textSize="60sp" />
 
                 <Button
-                    android:id="@+id/Button01"
+                    android:id="@+id/Btn_00"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_marginRight="2dp"
@@ -202,7 +200,6 @@
                     android:background="@drawable/number_button_background"
                     android:text="00"
                     android:textSize="50sp" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -249,7 +246,6 @@
                     android:background="@drawable/equal_button_background"
                     android:text="="
                     android:textSize="60sp" />
-
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
@@ -298,6 +294,21 @@
                             android:layout_height="wrap_content" >
                         </com.vpadn.ads.VpadnBanner>
                     </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/MainLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <com.google.android.gms.ads.AdView
+                            xmlns:ads="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/adView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            ads:adSize="BANNER"
+                            ads:adUnitId="pub-7084598474978780" />
+                    </LinearLayout>
                 </RelativeLayout>
 
                 <TextView

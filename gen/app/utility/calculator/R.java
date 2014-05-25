@@ -359,15 +359,16 @@ containing a value of this type.
         public static final int common_signin_btn_text_pressed_light=0x7f020017;
         public static final int equal_button_background=0x7f020018;
         public static final int function_button_background=0x7f020019;
-        public static final int ic_launcher=0x7f02001a;
-        public static final int ic_plusone_medium_off_client=0x7f02001b;
-        public static final int ic_plusone_small_off_client=0x7f02001c;
-        public static final int ic_plusone_standard_off_client=0x7f02001d;
-        public static final int ic_plusone_tall_off_client=0x7f02001e;
+        public static final int ic_plusone_medium_off_client=0x7f02001a;
+        public static final int ic_plusone_small_off_client=0x7f02001b;
+        public static final int ic_plusone_standard_off_client=0x7f02001c;
+        public static final int ic_plusone_tall_off_client=0x7f02001d;
+        public static final int icon=0x7f02001e;
         public static final int number_button_background=0x7f02001f;
     }
     public static final class id {
         public static final int Btn_0=0x7f05000f;
+        public static final int Btn_00=0x7f050014;
         public static final int Btn_1=0x7f050009;
         public static final int Btn_2=0x7f05000e;
         public static final int Btn_3=0x7f050013;
@@ -385,14 +386,15 @@ containing a value of this type.
         public static final int Btn_minus=0x7f050016;
         public static final int Btn_plus=0x7f050017;
         public static final int Btn_times=0x7f050015;
-        public static final int Button01=0x7f050014;
-        public static final int action_settings=0x7f05001d;
+        public static final int MainLayout=0x7f05001b;
+        public static final int action_settings=0x7f05001f;
         public static final int adLayout=0x7f050019;
-        public static final int formula=0x7f05001b;
+        public static final int adView=0x7f05001c;
+        public static final int formula=0x7f05001d;
         public static final int hybrid=0x7f050004;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int output=0x7f05001c;
+        public static final int output=0x7f05001e;
         public static final int relativeLayout1=0x7f050005;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;

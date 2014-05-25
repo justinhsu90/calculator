@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -32,9 +33,9 @@ import com.vpadn.ads.VpadnBanner;
 @SuppressLint("DefaultLocale")
 public class MainActivity extends Activity {
 	static TextView output, formula = null;
-	static Button btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9;
+	static Button btn_00, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9;
 	static Button btn_C, btn_delete, btn_divided, btn_minus, btn_times, btn_plus, btn_dot, btn_equal;
-//	btn_remainder
+	// btn_remainder
 	double[] numArr;
 	static String[] funArr = { "+", "-", "x", "÷", "%" };
 	static String outputInString = null;
@@ -47,37 +48,82 @@ public class MainActivity extends Activity {
 	private Vibrator vibrate;
 	private boolean equalPressed = false;
 
+	// private AdView adView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		vibrate = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		adBannerLayout = (RelativeLayout) findViewById(R.id.adLayout);
-
-		try {
-			String returnCode = getCountryReturn("");
-			// System.out.println("return code is " + returnCode);
-			if (returnCode.equals("TW") || returnCode.equals("CN")) {
-				vpadnBanner = new VpadnBanner(this, bannerId, VpadnAdSize.SMART_BANNER, returnCode);
-			} else {
-
-			}
-		} catch (InterruptedException e) {
-
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-
-		VpadnAdRequest adRequest = new VpadnAdRequest();
-		adRequest.setEnableAutoRefresh(true);
-		HashSet<String> testDeviceImeiSet = new HashSet<String>();
-		testDeviceImeiSet.add(getImei(this));
-		// adRequest.setTestDevices(testDeviceImeiSet);
-		vpadnBanner.loadAd(adRequest);
-		adBannerLayout.addView(vpadnBanner);
 		initilized();
 		SetMyOnClick();
+		/** get area code **/
+		if (isOnline()) {
+			try {
+				String returnCode = getCountryReturn("");
+				if (returnCode.equals("TW") || returnCode.equals("CN")) {
+					// /** Vpon **/
+					vpadnBanner = new VpadnBanner(this, bannerId, VpadnAdSize.SMART_BANNER, returnCode);
+					VpadnAdRequest VponadRequest = new VpadnAdRequest();
+					VponadRequest.setEnableAutoRefresh(true);
+					// HashSet<String> testDeviceImeiSet = new
+					// HashSet<String>();
+					// testDeviceImeiSet.add(getImei(this));
+					// adRequest.setTestDevices(testDeviceImeiSet);
+					vpadnBanner.loadAd(VponadRequest);
+					adBannerLayout.addView(vpadnBanner);
+				} else {
+					// /** admob **/
+					// LinearLayout layout = (LinearLayout)
+					// this.findViewById(R.id.MainLayout);
+					// // adView = new AdView(this);
+					// // adView.setAdUnitId("pub-7084598474978780");
+					// // adView.setAdSize(AdSize.BANNER);
+					// // AdRequest adRequest = new AdRequest.Builder().build();
+					// // adBannerLayout.addView(adView);
+					// // layout.addView(adView);
+					// AdView adView = (AdView) this.findViewById(R.id.adView);
+					// AdRequest adRequest = new AdRequest.Builder().build();
+					//
+					// // .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+					// // .addTestDevice("TEST_DEVICE_ID")
+					// adView.setAdUnitId("pub-7084598474978780");
+					//
+					// adView.loadAd(adRequest);
+					//
+					// adView.setAdListener(new AdListener() {
+					// public void onAdLoaded() {
+					// }
+					//
+					// public void onAdFailedToLoad(int errorcode) {
+					// }
+					// // 只導入您需要的方法。
+					// });
+					// AdRequest adRequest = new
+					// AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("TEST_DEVICE_ID")
+					// .build();
+					// adView.loadAd(adRequest);
+
+					// adView.loadAd(adRequest);
+					// adBannerLayout.addView(adView);
+					// layout.addView(adView);
+				}
+			} catch (InterruptedException e) {
+
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// vpadnBanner = new VpadnBanner(this, bannerId,
+			// VpadnAdSize.SMART_BANNER, "CN");
+		}
 	};
+
+	public boolean isOnline() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+	}
 
 	public static String getImei(Context context) {
 		String imei = "";
@@ -92,6 +138,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void initilized() {
+		btn_00 = (Button) this.findViewById(R.id.Btn_00);
 		btn_0 = (Button) this.findViewById(R.id.Btn_0);
 		btn_1 = (Button) this.findViewById(R.id.Btn_1);
 		btn_2 = (Button) this.findViewById(R.id.Btn_2);
@@ -109,7 +156,7 @@ public class MainActivity extends Activity {
 		btn_dot = (Button) this.findViewById(R.id.Btn_dot);
 		btn_plus = (Button) this.findViewById(R.id.Btn_plus);
 		btn_times = (Button) this.findViewById(R.id.Btn_times);
-//		btn_remainder = (Button) this.findViewById(R.id.Btn_remainder);
+		// btn_remainder = (Button) this.findViewById(R.id.Btn_remainder);
 		btn_equal = (Button) this.findViewById(R.id.Btn_equal);
 		output = (TextView) this.findViewById(R.id.output);
 		formula = (TextView) this.findViewById(R.id.formula);
@@ -130,7 +177,7 @@ public class MainActivity extends Activity {
 		btn_delete.setOnClickListener(MyOnClick);
 		btn_divided.setOnClickListener(MyOnClick);
 		btn_minus.setOnClickListener(MyOnClick);
-//		btn_remainder.setOnClickListener(MyOnClick);
+		// btn_remainder.setOnClickListener(MyOnClick);
 		btn_times.setOnClickListener(MyOnClick);
 		btn_plus.setOnClickListener(MyOnClick);
 		btn_dot.setOnClickListener(MyOnClick);
@@ -142,6 +189,10 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			vibrate.vibrate(100);
 			switch (v.getId()) {
+			case R.id.Btn_00:
+				inputCheck("0");
+				inputCheck("0");
+				break;
 			case R.id.Btn_0:
 				inputCheck("0");
 				break;
@@ -187,9 +238,9 @@ public class MainActivity extends Activity {
 			case R.id.Btn_divided:
 				inputCheck("÷");
 				break; // 3=/
-//			case R.id.Btn_remainder:
-//				inputCheck("%");
-//				break; // 99=
+			// case R.id.Btn_remainder:
+			// inputCheck("%");
+			// break; // 99=
 			case R.id.Btn_C:
 				output.setText("0");
 				formula.setText("");
@@ -436,12 +487,39 @@ public class MainActivity extends Activity {
 					// System.out.println("tetet");
 					// Toast.makeText(this, String.valueOf(expression.get(0)),
 					// Toast.LENGTH_SHORT).show();
+					String tempString2 = String.format("%.04f", Float.valueOf(expression.get(0)));
+					// System.out.println("last" +
+					// tempString2.(tempString2.length()));
+					while (String.valueOf(tempString2.length()).equals("0")) {
+						tempString2 = tempString2.substring(0, tempString2.length() - 1);
+						System.out.println("last" + tempString2);
+
+					}
+					System.out.println("last:::::::::" + tempString2);
+
 					return String.valueOf(String.format("%.04f", Float.valueOf(expression.get(0))));
 					// return "0";
 				}
 			}
 		}
 		return null;
+	}
+
+	public abstract class AdListener {
+		public void onAdLoaded() {
+		}
+
+		public void onAdFailedToLoad(int errorCode) {
+		}
+
+		public void onAdOpened() {
+		}
+
+		public void onAdClosed() {
+		}
+
+		public void onAdLeftApplication() {
+		}
 	}
 
 	public interface VpadnAdListener {
@@ -457,8 +535,22 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	public void onPause() {
+		// adView.pause();
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		// adView.resume();
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		// adView.destroy();
+
 		if (vpadnBanner != null) {
 			vpadnBanner.destroy();
 			vpadnBanner = null;
