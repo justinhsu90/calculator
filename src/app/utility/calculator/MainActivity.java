@@ -24,6 +24,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
 import com.vpadn.ads.VpadnAd;
 import com.vpadn.ads.VpadnAdRequest;
 import com.vpadn.ads.VpadnAdSize;
@@ -55,12 +57,18 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 		vibrate = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		adBannerLayout = (RelativeLayout) findViewById(R.id.adLayout);
+		System.out.println("parse send");
+//		Parse.initialize(this, "PHtkerQqggyUldXjnUBVkKlYC3rIw4EDjBoOcbKl", "vCUv0i6F5wid6GaTMXbg3PvnG7gCoHwdHJ6PnZEj");
+//		ParseObject testObject = new ParseObject("TestObject");
+//		testObject.put("foo", "bar");
+//		testObject.saveInBackground();
+		System.out.println("parse sent");
 		initilized();
 		SetMyOnClick();
 		new Thread() {
 
 			public void run() {
-				initialVpon();
+				 initialVpon();
 
 			}
 		}.start();
@@ -72,6 +80,9 @@ public class MainActivity extends Activity {
 		if (isOnline()) {
 			try {
 				String returnCode = getCountryReturn("");
+				if(returnCode==null){
+					returnCode="TW";
+				}
 				if (returnCode.equals("TW") || returnCode.equals("CN")) {
 					// /** Vpon **/
 					vpadnBanner = new VpadnBanner(this, bannerId, VpadnAdSize.SMART_BANNER, returnCode);
@@ -102,7 +113,7 @@ public class MainActivity extends Activity {
 					// // adRequest.setTestDevices(testDeviceImeiSet);
 					// vpadnBanner.loadAd(VponadRequest);
 					// adBannerLayout.addView(vpadnBanner);
-				} else {
+//				} else {
 					// /** admob **/
 					// LinearLayout layout = (LinearLayout)
 					// this.findViewById(R.id.MainLayout);
@@ -341,7 +352,7 @@ public class MainActivity extends Activity {
 		}
 
 		// private String url = "http://ip-api.com/json/";
-		private String countryCode;
+		private String countryCode=null;
 
 		@Override
 		protected String doInBackground(String... IP) {
