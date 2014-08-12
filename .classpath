@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry kind="lib" path="/Volumes/Data/CLOUD/Google Drive/Java Tool/Eclipse General Workspace/Calculator/libs/vpadn-sdk-obf423-11404102.jar"/>
+	<classpathentry kind="lib" path="libs/vpadn-sdk-obf423-11404102.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

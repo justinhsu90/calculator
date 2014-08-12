@@ -2,57 +2,167 @@ package app.utility.calculator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vpadn.ads.VpadnAd;
 import com.vpadn.ads.VpadnAdRequest;
 import com.vpadn.ads.VpadnAdSize;
 import com.vpadn.ads.VpadnBanner;
 
+@SuppressLint("DefaultLocale")
 public class MainActivity extends Activity {
 	static TextView output, formula = null;
-	static Button btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9;
-	static Button btn_C, btn_delete, btn_divided, btn_minus, btn_remainder, btn_times, btn_plus, btn_dot, btn_equal;
+	static Button btn_00, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9;
+	static Button btn_C, btn_delete, btn_divided, btn_minus, btn_times, btn_plus, btn_dot, btn_equal;
+	// btn_remainder
 	double[] numArr;
-	static String[] funArr = { "+", "-", "*", "�", "%" };
-	static String outputInString;
+	static String[] funArr = { "+", "-", "x", "÷", "%" };
+	static String outputInString = null;
 	static String lastCha;
 	private RelativeLayout adBannerLayout;
 	private VpadnBanner vpadnBanner = null;
 	private String bannerId = "8a80818245eed90c0145f6425dfa06c4";
-	private boolean reEnter = false;
+	// private boolean reEnter = false;
 	private ArrayList<String> expression = new ArrayList<String>();
-
+	private Vibrator vibrate;
 	private boolean equalPressed = false;
+
+	// private AdView adView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		vibrate = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		adBannerLayout = (RelativeLayout) findViewById(R.id.adLayout);
-		vpadnBanner = new VpadnBanner(this, bannerId, VpadnAdSize.SMART_BANNER, "TW");
-		VpadnAdRequest adRequest = new VpadnAdRequest();
-		adRequest.setEnableAutoRefresh(true);
-		HashSet<String> testDeviceImeiSet = new HashSet<String>();
-		testDeviceImeiSet.add(getImei(this));
-		// adRequest.setTestDevices(testDeviceImeiSet);
-		adRequest.setGender(VpadnAdRequest.Gender.FEMALE);
-		vpadnBanner.loadAd(adRequest);
-		adBannerLayout.addView(vpadnBanner);
+		System.out.println("parse send");
+//		Parse.initialize(this, "PHtkerQqggyUldXjnUBVkKlYC3rIw4EDjBoOcbKl", "vCUv0i6F5wid6GaTMXbg3PvnG7gCoHwdHJ6PnZEj");
+//		ParseObject testObject = new ParseObject("TestObject");
+//		testObject.put("foo", "bar");
+//		testObject.saveInBackground();
+		System.out.println("parse sent");
 		initilized();
 		SetMyOnClick();
+		new Thread() {
+
+			public void run() {
+				 initialVpon();
+
+			}
+		}.start();
+		// initialVpon();
+
 	};
+
+	public void initialVpon() {
+		if (isOnline()) {
+			try {
+				String returnCode = getCountryReturn("");
+				if(returnCode==null){
+					returnCode="TW";
+				}
+				if (returnCode.equals("TW") || returnCode.equals("CN")) {
+					// /** Vpon **/
+					vpadnBanner = new VpadnBanner(this, bannerId, VpadnAdSize.SMART_BANNER, returnCode);
+					// VpadnAdRequest VponadRequest = new VpadnAdRequest();
+					// VponadRequest.setEnableAutoRefresh(true);
+
+					this.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							// vpadnBanner = new VpadnBanner(this, bannerId, VpadnAdSize.SMART_BANNER, returnCode);
+							VpadnAdRequest VponadRequest = new VpadnAdRequest();
+							VponadRequest.setEnableAutoRefresh(true);
+							// TODO Auto-generated method stub
+							// VponadRequest.setEnableAutoRefresh(true);
+							// HashSet<String> testDeviceImeiSet = new
+							// HashSet<String>();
+							// testDeviceImeiSet.add(getImei(this));
+							// adRequest.setTestDevices(testDeviceImeiSet);
+							vpadnBanner.loadAd(VponadRequest);
+							adBannerLayout.addView(vpadnBanner);
+						}
+					});
+					// VponadRequest.setEnableAutoRefresh(true);
+					// // HashSet<String> testDeviceImeiSet = new
+					// // HashSet<String>();
+					// // testDeviceImeiSet.add(getImei(this));
+					// // adRequest.setTestDevices(testDeviceImeiSet);
+					// vpadnBanner.loadAd(VponadRequest);
+					// adBannerLayout.addView(vpadnBanner);
+//				} else {
+					// /** admob **/
+					// LinearLayout layout = (LinearLayout)
+					// this.findViewById(R.id.MainLayout);
+					// // adView = new AdView(this);
+					// // adView.setAdUnitId("pub-7084598474978780");
+					// // adView.setAdSize(AdSize.BANNER);
+					// // AdRequest adRequest = new AdRequest.Builder().build();
+					// // adBannerLayout.addView(adView);
+					// // layout.addView(adView);
+					// AdView adView = (AdView) this.findViewById(R.id.adView);
+					// AdRequest adRequest = new AdRequest.Builder().build();
+					//
+					// // .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+					// // .addTestDevice("TEST_DEVICE_ID")
+					// adView.setAdUnitId("pub-7084598474978780");
+					//
+					// adView.loadAd(adRequest);
+					//
+					// adView.setAdListener(new AdListener() {
+					// public void onAdLoaded() {
+					// }
+					//
+					// public void onAdFailedToLoad(int errorcode) {
+					// }
+					// // 只導入您需要的方法。
+					// });
+					// AdRequest adRequest = new
+					// AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("TEST_DEVICE_ID")
+					// .build();
+					// adView.loadAd(adRequest);
+
+					// adView.loadAd(adRequest);
+					// adBannerLayout.addView(adView);
+					// layout.addView(adView);
+				}
+			} catch (InterruptedException e) {
+
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// vpadnBanner = new VpadnBanner(this, bannerId,
+			// VpadnAdSize.SMART_BANNER, "CN");
+		}
+
+	}
+
+	public boolean isOnline() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+	}
 
 	public static String getImei(Context context) {
 		String imei = "";
@@ -67,6 +177,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void initilized() {
+		btn_00 = (Button) this.findViewById(R.id.Btn_00);
 		btn_0 = (Button) this.findViewById(R.id.Btn_0);
 		btn_1 = (Button) this.findViewById(R.id.Btn_1);
 		btn_2 = (Button) this.findViewById(R.id.Btn_2);
@@ -84,13 +195,14 @@ public class MainActivity extends Activity {
 		btn_dot = (Button) this.findViewById(R.id.Btn_dot);
 		btn_plus = (Button) this.findViewById(R.id.Btn_plus);
 		btn_times = (Button) this.findViewById(R.id.Btn_times);
-		btn_remainder = (Button) this.findViewById(R.id.Btn_remainder);
+		// btn_remainder = (Button) this.findViewById(R.id.Btn_remainder);
 		btn_equal = (Button) this.findViewById(R.id.Btn_equal);
 		output = (TextView) this.findViewById(R.id.output);
 		formula = (TextView) this.findViewById(R.id.formula);
 	}
 
 	private void SetMyOnClick() {
+		btn_00.setOnClickListener(MyOnClick);
 		btn_0.setOnClickListener(MyOnClick);
 		btn_1.setOnClickListener(MyOnClick);
 		btn_2.setOnClickListener(MyOnClick);
@@ -105,7 +217,7 @@ public class MainActivity extends Activity {
 		btn_delete.setOnClickListener(MyOnClick);
 		btn_divided.setOnClickListener(MyOnClick);
 		btn_minus.setOnClickListener(MyOnClick);
-		btn_remainder.setOnClickListener(MyOnClick);
+		// btn_remainder.setOnClickListener(MyOnClick);
 		btn_times.setOnClickListener(MyOnClick);
 		btn_plus.setOnClickListener(MyOnClick);
 		btn_dot.setOnClickListener(MyOnClick);
@@ -115,14 +227,15 @@ public class MainActivity extends Activity {
 	private Button.OnClickListener MyOnClick = new Button.OnClickListener() {
 
 		public void onClick(View v) {
-			// if (reEnter) {
-			//
-			// formula.setText(formula.getText() + "" + output.getText());
-			// output.setText("");
-			// reEnter = false;
-			// }
-
+			if (output.getText().equals("0")) {
+				setOutputTextWithSize("");
+			}
+			vibrate.vibrate(100);
 			switch (v.getId()) {
+			case R.id.Btn_00:
+				inputCheck("0");
+				inputCheck("0");
+				break;
 			case R.id.Btn_0:
 				inputCheck("0");
 				break;
@@ -163,62 +276,146 @@ public class MainActivity extends Activity {
 				inputCheck("-");
 				break; // 1=-
 			case R.id.Btn_times:
-				inputCheck("*");
+				inputCheck("x");
 				break; // 2=X
 			case R.id.Btn_divided:
-				inputCheck("�");
+				inputCheck("÷");
 				break; // 3=/
-			case R.id.Btn_remainder:
-				inputCheck("%");
-				break; // 99=
+			// case R.id.Btn_remainder:
+			// inputCheck("%");
+			// break; // 99=
 			case R.id.Btn_C:
-				output.setText("");
+				setOutputTextWithSize("0");
 				formula.setText("");
 				break;
 			case R.id.Btn_delete:
-				outputInString = outputInString.substring(0, outputInString.length() - 1);
-				output.setText(outputInString);
+
+				if (outputInString != null) {
+					// System.out.println("output string" + outputInString);
+					if (outputInString.length() > 1) {
+						outputInString = outputInString.substring(0, outputInString.length() - 1);
+						setOutputTextWithSize(outputInString);
+					} else {
+						outputInString = "0";
+						setOutputTextWithSize(outputInString);
+					}
+				}
 				break;
 			case R.id.Btn_equal:
 				equalPressed = true;
-
 				formula.setText(outputInString + "=");
-				output.setText(calculate(outputInString));
+				String teststStr = calculate(outputInString);
+				// System.out.println("ttttt" + teststStr);
+				setOutputTextWithSize(teststStr);
+				// setOutputTextWithSize(calculate(outputInString));
 
 			}
 		}
 	};
 
+	public void setOutputTextWithSize(String text) {
+
+		if (text.length() < 10) {
+
+			output.setTextSize(60);
+
+		} else if (text.length() < 13) {
+			output.setTextSize(50);
+
+		} else if (text.length() < 15) {
+			output.setTextSize(45);
+		} else if (text.length() < 17) {
+			output.setTextSize(40);
+		} else if (text.length() < 19) {
+			output.setTextSize(35);
+		} else if (text.length() < 21) {
+			output.setTextSize(30);
+		} else if (text.length() > 21) {
+			output.setTextSize(25);
+		}
+
+		// if(text.length()>13){
+		// output.setTextSize(30);
+		//
+		// }else if(text.length()<15&&text.length()>10){
+		// output.setTextSize(50);
+		// }
+		output.setText(text);
+
+	}
+
+	private class GetJSONAsyncTask extends AsyncTask<String, Void, String> {
+		@Override
+		protected void onPreExecute() {
+		}
+
+		// private String url = "http://ip-api.com/json/";
+		private String countryCode=null;
+
+		@Override
+		protected String doInBackground(String... IP) {
+			try {
+				HttpClient httpclient = new DefaultHttpClient();
+				// HttpGet httpget = new HttpGet(url + IP);
+				HttpGet httpget = new HttpGet("http://ip-api.com/json");
+
+				HttpResponse response = httpclient.execute(httpget);
+				JSONObject jObject = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
+				if (jObject != null) {
+					if (jObject.getString("status").equals("success")) {
+						countryCode = jObject.getString("countryCode");
+						// System.out.println("1ountry code is " + countryCode);
+						return countryCode;
+					}
+				}
+			} catch (Exception e) {
+				// System.out.println("error found");
+				e.printStackTrace();
+			}
+			// System.out.println("2country code is " + countryCode);
+
+			return countryCode;
+		}
+	}
+
+	public String getCountryReturn(String IP) throws InterruptedException, ExecutionException {
+		return new GetJSONAsyncTask().execute(IP).get();
+	}
+
 	public void setText(String input) {
-		output.setText(output.getText() + input);
+		setOutputTextWithSize(output.getText() + input);
 		outputInString = output.getText().toString();
 		lastCha = outputInString.substring(outputInString.length() - 1);
-		System.out.println("LASTCHA in setText is " + lastCha);
+		// System.out.println("LASTCHA in setText is " + lastCha);
 	}
 
 	public void inputCheck(String input) {
 		if (equalPressed) {
 			outputInString = "";
-			if (Arrays.asList(funArr).contains(input)) {
-				String temp = expression.get(0);
-				expression.clear();
-				expression.add(temp);
+			if (Arrays.asList(funArr).contains(input)) {// input == +-*%/
+				// String temp = expression.get(0);
+				// expression.clear();
+				// expression.add(temp);
+				// outputInString = expression.get(0);
 				equalPressed = false;
 			} else {
-				expression.clear();
+				// expression.clear();
 				formula.setText(formula.getText() + "" + output.getText());
-				output.setText("");
+				setOutputTextWithSize("");
 				equalPressed = false;
 			}
 		}
 		boolean has = false;
 		if (output.getText().toString().length() > 0) {
 			if (Arrays.asList(funArr).contains(input) || input.equals(".")) {
-				if (!outputInString.contains("%") && (input.equals("+") || input.equals("-") || input.equals("�") || input.equals("*") || input.equals("."))) {
+				if (!outputInString.contains("%") && (input.equals("+") || input.equals("-") || input.equals("÷") || input.equals("x") || input.equals("."))) {
+					// System.out.println("GAGA");
+
 					if (!Arrays.asList(funArr).contains(lastCha) && !lastCha.equals(".")) {
 						setText(input);
 					}
 				} else if (input.equals("%")) { // if input is %
+					// System.out.println("herer");
 					for (int i = 0; i < funArr.length; i++) {
 						if (outputInString.contains(funArr[i])) {
 							has = true;
@@ -231,40 +428,60 @@ public class MainActivity extends Activity {
 					}
 				}
 			} else {// input is not a function
+				// System.out.println("YAYA");
+
 				setText(input);
 			}
 		} else {// length of output is 0
-			if (!(input.equals("+") || input.equals("-") || input.equals("�") || input.equals("*") || input.equals(".") || input.equals("%"))) {
+			// System.out.println("TATA");
+
+			if (!(input.equals("+") || input.equals("-") || input.equals("÷") || input.equals("x") || input.equals(".") || input.equals("%"))) {
 				setText(input);
 			}
 		}
 
 	}
 
+	@SuppressLint("DefaultLocale")
 	private String calculate(String output) {
 		if (equalPressed) {
+			expression.clear();
+
 			String tempString = "";
-			System.out.println("string is:" + output);
+			// System.out.println("string is:" + output);
 			if (output != null) {
+				if (!expression.isEmpty()) {
+					// System.out.println("expression 0 is:" +
+					// expression.get(0));
+				}
+				// convert outputInString into Array List
 				for (int i = 0; i < output.length(); i++) {
+					// expression.clear();
 					if (Arrays.asList(funArr).contains(String.valueOf(output.charAt(i)))) {
 						expression.add(tempString);
 						tempString = "";
 						if (i != output.length() - 1) {
 							expression.add(String.valueOf(output.charAt(i)));
+							// System.out.println("add " + output.charAt(i));
+							// System.out.println(expression);
+
 						}
 					} else {
 						tempString = tempString + output.charAt(i);
 						if (i == output.length() - 1) {
 							expression.add(tempString);
+							// System.out.println("add temp " + tempString);
+							// System.out.println(expression);
+
 						}
 					}
 				}
-				if (!expression.contains("%") && expression.size() < 2) {
+				// calculate if % is not exist and size of expression is >2
+				if (!expression.contains("%") && expression.size() > 2) {
 					int expressionIndex = 1;
-					while (expression.contains("*") || expression.contains("�")) {
-						if (expression.get(expressionIndex).equals("*")) {
-							int indexOfFun = expression.indexOf("*");
+					while (expression.contains("x") || expression.contains("÷")) {
+						if (expression.get(expressionIndex).equals("x")) {
+							int indexOfFun = expression.indexOf("x");
 							double fromParam = Double.parseDouble(expression.get(indexOfFun - 1));
 							double endParam = Double.parseDouble(expression.get(indexOfFun + 1));
 							double tempSum = fromParam * endParam;
@@ -272,23 +489,33 @@ public class MainActivity extends Activity {
 							expression.remove(indexOfFun);
 							expression.remove(indexOfFun - 1);
 							expression.add(indexOfFun - 1, String.valueOf(tempSum));
-						} else if (expression.get(expressionIndex).equals("�")) {
-							int indexOfFun = expression.indexOf("�");
+						} else if (expression.get(expressionIndex).equals("÷")) {
+							int indexOfFun = expression.indexOf("÷");
 							double fromParam = Double.parseDouble(expression.get(indexOfFun - 1));
 							double endParam = Double.parseDouble(expression.get(indexOfFun + 1));
 							double tempSum = fromParam / endParam;
+							// System.out.println((indexOfFun - 1) + " is " +
+							// fromParam);
+							// System.out.println((indexOfFun + 1) + " is " +
+							// endParam);
+							// System.out.println("tempSum is " + tempSum);
 							expression.remove(indexOfFun);
 							expression.remove(indexOfFun);
 							expression.remove(indexOfFun - 1);
 							expression.add(indexOfFun - 1, String.valueOf(tempSum));
 						}
-						if (expressionIndex < expression.size() - 1 && !expression.get(expressionIndex).equals("*") && !expression.get(expressionIndex).equals("�")) {
+						if (expressionIndex < expression.size() - 1 && !expression.get(expressionIndex).equals("x") && !expression.get(expressionIndex).equals("÷")) {
 							expressionIndex = expressionIndex + 2;
 						}
 					}
 					while (expression.contains("+") || expression.contains("-")) {
 						double fromParam = Double.parseDouble(expression.get(0));
+						// System.out.println("0 is " + fromParam);
+						// System.out.println("1 is " + expression.get(1));
+
 						double endParam = Double.parseDouble(expression.get(2));
+						// System.out.println("2 is " + endParam);
+
 						double tempSum = 0;
 						if (expression.get(1).equals("+")) {
 							tempSum = fromParam + endParam;
@@ -301,37 +528,73 @@ public class MainActivity extends Activity {
 						expression.add(0, String.valueOf(tempSum));
 					}
 				} else if (expression.size() > 2) {
-					System.out.println("expression size isisisisis:"+expression.size());
+					// System.out.println("expression size isisisisis:" +
+					// expression.size());
 					double fromParam = Double.parseDouble(expression.get(0));
 					double endParam = Double.parseDouble(expression.get(2));
 					double remainder = fromParam % endParam;
 					double tempSum = remainder;
 					expression.clear();
 					expression.add(String.valueOf(tempSum));
-				} else 
-				{
+				} else {
 
-				System.out.println("TETETETETETE");
+					// System.out.println("TETETETETETE");
 				}
 			}
 			if (output == null) {
 				equalPressed = false;
-
 				return "0";
 			} else {
 				equalPressed = false;
-
-				Toast.makeText(this, String.valueOf(expression.size()), Toast.LENGTH_SHORT).show();
+				// Toast.makeText(this, String.valueOf(expression.get(0)),
+				// Toast.LENGTH_SHORT).show();
 				if (Double.parseDouble(expression.get(0)) % 1 == 0) {
-					reEnter = true;
+					// reEnter = true;
+					// System.out.println("dadada");
+
 					return String.valueOf((int) Double.parseDouble(expression.get(0)));
 				} else {
-					reEnter = true;
-					return (String.valueOf(expression.get(0).toString()));
+					// reEnter = true;
+					// System.out.println("tetet");
+					// Toast.makeText(this, String.valueOf(expression.get(0)),
+					// Toast.LENGTH_SHORT).show();
+					String tempString2 = String.format("%.04f", Float.valueOf(expression.get(0)));
+					// System.out.println("last" +
+					// tempString2.(tempString2.length()));
+					// if
+					// (String.charAt(tempString2.length())==String.charAt(0)) {
+					while (String.valueOf(tempString2.charAt(tempString2.length() - 1)).equals("0")) {
+						tempString2 = tempString2.substring(0, tempString2.length() - 1);
+						// //System.out.println("last" + tempString2);
+
+					}
+					// System.out.println("last:::::::::" + tempString2);
+
+					// return String.valueOf(String.format("%.04f",
+					// Float.valueOf(expression.get(0))));
+					// return "0";
+					return tempString2;
 				}
 			}
 		}
 		return null;
+	}
+
+	public abstract class AdListener {
+		public void onAdLoaded() {
+		}
+
+		public void onAdFailedToLoad(int errorCode) {
+		}
+
+		public void onAdOpened() {
+		}
+
+		public void onAdClosed() {
+		}
+
+		public void onAdLeftApplication() {
+		}
 	}
 
 	public interface VpadnAdListener {
@@ -347,12 +610,58 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	public void onPause() {
+		// adView.pause();
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		// adView.resume();
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		// adView.destroy();
+
 		if (vpadnBanner != null) {
 			vpadnBanner.destroy();
 			vpadnBanner = null;
 		}
 	}
-
+	// get WiFi IP
+	// private String getLocalIpAddress() {
+	// WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+	// WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+	// int ipAddress = wifiInfo.getIpAddress();
+	//
+	// return String
+	// .format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
+	// (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+	// }
+	//
+	// get 3G IP
+	// public String get3GIpAddress() {
+	// try {
+	// for (Enumeration<NetworkInterface> en =
+	// NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+	// NetworkInterface intf = en.nextElement();
+	// for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses();
+	// enumIpAddr.hasMoreElements();) {
+	// InetAddress inetAddress = enumIpAddr.nextElement();
+	// if (!inetAddress.isLoopbackAddress() && inetAddress instanceof
+	// Inet4Address) {
+	// if (!inetAddress.isLoopbackAddress() && inetAddress
+	// instanceof Inet6Address) {
+	// return inetAddress.getHostAddress().toString();
+	// }
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
 }
