@@ -24,8 +24,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.parse.Parse;
-import com.parse.ParseObject;
 import com.vpadn.ads.VpadnAd;
 import com.vpadn.ads.VpadnAdRequest;
 import com.vpadn.ads.VpadnAdSize;
